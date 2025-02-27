@@ -1,70 +1,111 @@
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+`# DigiWell - A Mental Health Application
 
-## Available Scripts
+## About the Project
+DigiWell is a mental health application designed to help users track their mood, practice meditation, and receive AI-powered mental health support. The application consists of a **React.js frontend** and an **Express.js backend** that work together to provide a seamless experience.
 
-In the project directory, you can run:
+## Getting Started
 
-### `npm start`
+### Prerequisites
+Ensure you have the following installed on your system:
+- **Node.js** (Latest LTS version recommended)
+- **npm** or **yarn**
+- **MongoDB** (For local database or use MongoDB Atlas)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Installation and Running the Project
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 1. Clone the Repository
+```sh
+git clone https://github.com/your-username/DigiWell.git
+cd DigiWell `
 
-### `npm test`
+### 2\. Start the Backend Server
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Navigate to the `backend` folder and install dependencies:
 
-### `npm run build`
+sh
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+CopyEdit
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+`cd backend
+npm install`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Run the Express.js server:
 
-### `npm run eject`
+sh
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+CopyEdit
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+`npm start`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+By default, the backend runs on **<http://localhost:5000>**.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### 3\. Start the Frontend (React App)
 
-## Learn More
+Go back to the root directory and install dependencies:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+sh
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+CopyEdit
 
-### Code Splitting
+`cd handwriting-recognition..
+npm install`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+similarly go to the backend folder and type npm install
 
-### Analyzing the Bundle Size
+Run the React development server:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+sh
 
-### Making a Progressive Web App
+CopyEdit
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+`npm start`
 
-### Advanced Configuration
+The application will open in your browser at **<http://localhost:3000>**.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Available Scripts
+-----------------
 
-### Deployment
+### Backend
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Inside the `backend` folder, you can run:
 
-### `npm run build` fails to minify
+-   **`npx nodemon server.js`** - Starts the Express server.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Frontend
+
+Inside the root project directory, you can run:
+
+-   **`npm start`** - Runs the app in development mode.
+-   **`npm test`** - Launches the test runner.
+-   **`npm run build`** - Builds the app for production.
+
+API Endpoints
+-------------
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| GET | `/api/mood` | Fetch user mood history |
+| POST | `/api/mood` | Log a new mood entry |
+| GET | `/api/meditation` | Get meditation recommendations |
+| POST | `/api/alert` | Send emergency alert (Twilio) |
+
+Deployment
+----------
+
+To deploy the application, you can use:
+
+-   **Vercel / Netlify** for frontend deployment.
+-   **Render / Heroku** for backend deployment.
+
+Troubleshooting
+---------------
+
+-   **Backend not connecting?** Ensure MongoDB is running and correctly configured in `.env`.
+-   **CORS issues?** Check `cors` middleware in `backend/server.js`.
+-   **Frontend not loading data?** Verify the API base URL in `src/config.js`.
+
+🚀 **Enjoy using DigiWell! Your mental health companion.**
+
+
+
