@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Line } from "react-chartjs-2";
 import { Chart, registerables } from "chart.js";
-import { Container } from "@mui/material";
-
 import {
+  Container,
   Card,
   CardContent,
   Typography,
@@ -13,18 +12,21 @@ import {
   Button,
   Grid,
   Box,
-  Paper,
 } from "@mui/material";
+import HTMLFlipBook from "react-pageflip";
+import "../App.css"; // Ensure you style it properly
 
 Chart.register(...registerables);
 
-const Journal = () => {
+const Journal = ({ username }) => {
   const [entry, setEntry] = useState("");
   const [mood, setMood] = useState(5);
   const [journalEntries, setJournalEntries] = useState([]);
+  const [meditationHistory, setMeditationHistory] = useState([]);
 
   useEffect(() => {
     fetchEntries();
+    fetchMeditationHistory();
   }, []);
 
   const fetchEntries = async () => {
@@ -33,6 +35,17 @@ const Journal = () => {
       setJournalEntries(response.data);
     } catch (error) {
       console.error("Error fetching entries:", error);
+    }
+  };
+
+  const fetchMeditationHistory = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/getMeditationHistory?username=JohnDoe`
+      );
+      setMeditationHistory(response.data.meditationHistory || []);
+    } catch (error) {
+      console.error("Error fetching meditation history:", error);
     }
   };
 
@@ -48,99 +61,135 @@ const Journal = () => {
   };
 
   return (
-    <Container maxWidth="md">
-      <Typography variant="h4" textAlign="center" sx={{ my: 3, fontWeight: "bold", color: "#1976D2" }}>
-        📝 Mental Health Journal
-      </Typography>
-
-      {/* Journal Entry Input Section */}
-      <Card sx={{ p: 3, mb: 4, boxShadow: 3 }}>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
-            How are you feeling today?
-          </Typography>
-
-          <TextField
-            fullWidth
-            multiline
-            rows={3}
-            variant="outlined"
-            placeholder="Write your thoughts..."
-            value={entry}
-            onChange={(e) => setEntry(e.target.value)}
-            sx={{ mb: 2 }}
-          />
-
-          <Typography variant="body1" sx={{ mb: 1 }}>
-            Mood (1 - 10): <strong>{mood}</strong>
-          </Typography>
-
-          <Slider
-            min={1}
-            max={10}
-            value={mood}
-            onChange={(e, newValue) => setMood(newValue)}
-            step={1}
-            valueLabelDisplay="auto"
-            sx={{ color: "#4CAF50" }}
-          />
-
-          <Button variant="contained" color="success" fullWidth sx={{ mt: 2 }} onClick={addEntry}>
-            Save Entry
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* Display Mood Trends & Messages */}
-      {journalEntries.length > 0 && (
-        <Grid container spacing={3}>
-          {/* Mood Trend Chart */}
-          <Grid item xs={12} md={7}>
-            <Card sx={{ p: 3, boxShadow: 3 }}>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  📈 Mood Trend Over Time
-                </Typography>
-                <Line
-                  data={{
-                    labels: journalEntries.map((entry) => entry.date),
-                    datasets: [
-                      {
-                        label: "Mood Level",
-                        data: journalEntries.map((entry) => entry.mood),
-                        borderColor: "rgb(75, 192, 192)",
-                        backgroundColor: "rgba(75, 192, 192, 0.2)",
-                        tension: 0.4,
-                      },
-                    ],
-                  }}
-                />
-              </CardContent>
-            </Card>
-          </Grid>
-
-          {/* Logged Messages with Ratings */}
-          <Grid item xs={12} md={5}>
-            <Paper sx={{ p: 3, height: "100%", overflowY: "auto", boxShadow: 3 }}>
-              <Typography variant="h6" gutterBottom>
-                📝 Logged Entries
+    <Box
+    sx={{
+      minHeight: "100vh",
+      width: "100vw", // Ensures the background covers full width
+      backgroundImage: "url('/618308.jpg')",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+      color: "white",
+      px: 3,
+    }}
+  >
+     <Box
+            sx={{
+              p: 4,
+              bgcolor: "rgba(0, 0, 0, 0.6)", // Semi-transparent background for readability
+              borderRadius: 3,
+              boxShadow: 3,
+              maxWidth: "95%",
+              width: "100%",
+            }}
+          >
+    <Container maxWidth="xl" sx={{ py: 5 }}>
+      <Grid container spacing={3}>
+        {/* Left Side: Mental Health Journal */}
+        <Grid item xs={12} md={4}>
+          <Card sx={{ p: 3, boxShadow: 5, backgroundColor: "#E3F2FD" }}>
+            <CardContent>
+              <Typography
+                variant="h5"
+                sx={{ fontWeight: "bold", color: "#1976D2", mb: 2 }}
+              >
+                📝 Mental Health Journal
               </Typography>
-
-              {journalEntries.map((entry, index) => (
-                <Box key={index} sx={{ p: 2, mb: 2, borderRadius: 2, bgcolor: "#F1F8E9", boxShadow: 1 }}>
-                  <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                    {entry.text}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    Mood: <strong style={{ color: moodColor(entry.mood) }}>{entry.mood}</strong>
-                  </Typography>
-                </Box>
-              ))}
-            </Paper>
+              <TextField
+                fullWidth
+                multiline
+                rows={3}
+                variant="outlined"
+                placeholder="Write your thoughts..."
+                value={entry}
+                onChange={(e) => setEntry(e.target.value)}
+                sx={{ mb: 2 }}
+              />
+              <Typography variant="body1">
+                Mood (1 - 10): <strong>{mood}</strong>
+              </Typography>
+              <Slider
+                min={1}
+                max={10}
+                value={mood}
+                onChange={(e, newValue) => setMood(newValue)}
+                step={1}
+                valueLabelDisplay="auto"
+              />
+              <Button
+                variant="contained"
+                color="success"
+                fullWidth
+                sx={{ mt: 2 }}
+                onClick={addEntry}
+              >
+                Save Entry
+              </Button>
+            </CardContent>
+          </Card>
+        </Grid>
+  
+        {/* Right Side: Graphs */}
+        <Grid item xs={12} md={8}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <Card sx={{ p: 3, boxShadow: 4 }}>
+                <CardContent>
+                  <Typography variant="h6">📈 Mood Trend Over Time</Typography>
+                  <Line
+                    data={{
+                      labels: journalEntries.map((entry) => entry.date),
+                      datasets: [
+                        {
+                          label: "Mood Level",
+                          data: journalEntries.map((entry) => entry.mood),
+                          borderColor: "rgb(75, 192, 192)",
+                          backgroundColor: "rgba(75, 192, 192, 0.2)",
+                          tension: 0.4,
+                        },
+                      ],
+                    }}
+                  />
+                </CardContent>
+              </Card>
+            </Grid>
+  
+            <Grid item xs={12}>
+              <Card sx={{ p: 3, boxShadow: 4 }}>
+                <CardContent>
+                  <Typography variant="h6">🧘 Mood vs Meditation</Typography>
+                  <Line
+                    data={{
+                      labels: journalEntries.map((entry) => entry.date),
+                      datasets: [
+                        {
+                          label: "Mood Level",
+                          data: journalEntries.map((entry) => entry.mood),
+                          borderColor: "rgb(255, 99, 132)",
+                          backgroundColor: "rgba(255, 99, 132, 0.2)",
+                          tension: 0.4,
+                        },
+                        {
+                          label: "Meditation Days (1 = Meditated, 0 = Not Meditated)",
+                          data: journalEntries.map((entry) =>
+                            meditationHistory.includes(entry.date) ? 1 : 0
+                          ),
+                          borderColor: "rgb(54, 162, 235)",
+                          backgroundColor: "rgba(54, 162, 235, 0.2)",
+                          tension: 0.4,
+                        },
+                      ],
+                    }}
+                  />
+                </CardContent>
+              </Card>
+            </Grid>
           </Grid>
         </Grid>
-      )}
+      </Grid>
     </Container>
+  </Box>
+  </Box>
   );
 };
 

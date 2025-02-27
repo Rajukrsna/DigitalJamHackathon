@@ -15,7 +15,13 @@ const twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKE
 
 // MongoDB Setup
 mongoose.connect(process.env.MONGO_URI);
-const MessageSchema = new mongoose.Schema({ userMessage: String, botResponse: String });
+// MongoDB Message Schema
+const MessageSchema = new mongoose.Schema({
+  userMessage: String,
+  botResponse: String,
+  sentiment: String,
+  timestamp: { type: Date, default: Date.now }
+});
 const Message = mongoose.model("Message", MessageSchema);
 
 // Sentiment Analysis Function
@@ -25,51 +31,55 @@ const detectSentiment = (message) => {
     return "low";
 };
 
-// API Route for Chatbot
+// Chatbot API Route
 app.post("/chat", async (req, res) => {
-    const { message, phoneNumber } = req.body;
-    const sentiment = detectSentiment(message);
+  const { message, phoneNumber } = req.body;
+  const sentiment = detectSentiment(message); // Detect user's mood
 
-    try {
-        // Call Gemini API
-        const response = await axios.post(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-            {
-                contents: [
-                    {
-                        parts: [
-                            {
-                                text: `The user is feeling ${sentiment} level distress. Respond with a helpful, calming message.\nUser: ${message}\nBot: `,
-                            },
-                        ],
-                    },
-                ],
-            },
-            { headers: { "Content-Type": "application/json" } }
-        );
+  try {
+      // Intelligent response strategy
+      let prompt = `The user is feeling ${sentiment} level distress. Respond warmly and supportively. \nUser: ${message}\nBot: `;
 
-        const botResponse = response.data.candidates[0]?.content?.parts[0]?.text || "I'm here to help. How are you feeling?";
+      // Special responses for high stress levels
+      if (sentiment === "high") {
+          prompt += "\nAlso, offer a simple relaxation tip like deep breathing.";
+      }
 
-        // Store Chat in DB
-        await Message.create({ userMessage: message, botResponse });
+      // Call Gemini API
+      const response = await axios.post(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+          {
+              contents: [{ parts: [{ text: prompt }] }],
+          },
+          { headers: { "Content-Type": "application/json" } }
+      );
 
-        // Send Emergency SMS if stress is HIGH
-        if (sentiment === "high" && phoneNumber) {
-            await twilioClient.messages.create({
-                body: `🚨 Urgent: Your friend may need emotional support. Please check on them.`,
-                from: process.env.TWILIO_PHONE_NUMBER,
-                to: phoneNumber,
-            });
-        }
+      let botResponse = response.data.candidates[0]?.content?.parts[0]?.text || "I'm here for you. Let's talk.";
 
-        res.json({ botResponse });
-    } catch (error) {
-        console.error("Gemini API Error:", error.response?.data || error.message);
-        res.status(500).json({ error: "Failed to get response from Gemini API" });
-    }
+      // Personalized Encouragement for Negative Sentiments
+      if (sentiment === "high" || sentiment === "moderate") {
+          botResponse += "\n💙 Remember, you're stronger than you think. Want a quick relaxation exercise?";
+      }
+
+      // Store chat in DB
+      await Message.create({ userMessage: message, botResponse, sentiment });
+
+      // 🚨 Emergency SMS Handling - But with Consent
+      if (sentiment === "high" && phoneNumber) {
+          const smsResponse = await twilioClient.messages.create({
+              body: `🚨 Urgent: Your friend may need emotional support. Would you like to check on them?`,
+              from: process.env.TWILIO_PHONE_NUMBER,
+              to: phoneNumber,
+          });
+          console.log("Emergency SMS Sent:", smsResponse.sid);
+      }
+
+      res.json({ botResponse });
+  } catch (error) {
+      console.error("Gemini API Error:", error.response?.data || error.message);
+      res.status(500).json({ error: "Failed to get response from Gemini API" });
+  }
 });
-
-;
 
 const JournalSchema = new mongoose.Schema({
     text: String,
@@ -219,6 +229,63 @@ const videoUrlMapping = {
       res.status(500).json({ error: "Error processing AI request" });
     }
   });
+
+
+  // User Schema
+const userSchema = new mongoose.Schema({
+  username: String,
+  meditationHistory: [String] // Store meditation dates here
+});
+
+const User = mongoose.model("User", userSchema);
+
+// Route to save meditation session date
+app.post("/saveMeditation", async (req, res) => {
+  const { username } = req.body;
+  const today = new Date().toISOString().split("T")[0]; // Get today's date
+
+  try {
+    let user = await User.findOne({ username });
+
+    if (!user) {
+      // Create new user if not found
+      user = new User({ username, meditationHistory: [today] });
+    } else {
+      // Prevent duplicate entries for the same day
+      if (!user.meditationHistory.includes(today)) {
+        user.meditationHistory.push(today);
+      }
+    }
+
+    await user.save();
+    res.json({ message: "Meditation session saved!", meditationHistory: user.meditationHistory });
+  } catch (error) {
+    console.error("Error saving meditation session:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+
+/**
+ * Route to get meditation history for a user
+ */
+app.get("/getMeditationHistory", async (req, res) => {
+  const { username } = req.query; // Get username from query parameters
+console.log(username)
+  try {
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+console.log(user.meditationHistory)
+    res.json({ meditationHistory: user.meditationHistory });
+  } catch (error) {
+    console.error("Error fetching meditation history:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 // Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
