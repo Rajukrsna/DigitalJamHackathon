@@ -31,7 +31,9 @@ Installation and Running the Project
 Clone the project repository from GitHub and navigate into the project directory:
 
  clone https://github.com/Rajukrsna/DigitalJamHackathon.git  
+ 
  cd handwriting-recognition  
+ 
  npm install
  `
 
