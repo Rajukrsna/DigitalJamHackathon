@@ -30,61 +30,32 @@ Installation and Running the Project
 
 Clone the project repository from GitHub and navigate into the project directory:
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   shCopyEditgit clone https://github.com/your-username/DigiWell.git  cd DigiWell   `
+ clone https://github.com/Rajukrsna/DigitalJamHackathon.git  
+ cd handwriting-recognition  
+ npm install
+ `
 
 ### 2\. Start the Backend Server
 
-Navigate to the backend folder and install dependencies:
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   shCopyEditcd backend  npm install   `
 
 Run the Express.js server:
-
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   shCopyEditnpm start   `
+npx nodemon server.js  `
 
 By default, the backend runs on [**http://localhost:5000**](http://localhost:5000).
 
 ### 3\. Start the Frontend (React App)
 
-Go back to the root directory and install dependencies:
-
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   shCopyEditcd ..  npm install   `
 
 Run the React development server:
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`   shCopyEditnpm start   `
+npm start   `
 
 The application will open in your browser at [**http://localhost:3000**](http://localhost:3000).
 
 Available Scripts
 
 -----------------
-
-### Backend
-
-Inside the backend folder, you can run the following commands:
-
-*   **npm start** - Starts the Express server.
-
-*   **npm run dev** - Runs the server with nodemon for live reloading.
-
-### Frontend
-
-Inside the root project directory, you can run:
-
-*   **npm start** - Runs the app in development mode.
-
-*   **npm test** - Launches the test runner.
-
-*   **npm run build** - Builds the app for production.
-
-API Endpoints
-
--------------
-
-Below are the available API endpoints:
-
-MethodEndpointDescriptionGET/api/moodFetch user mood historyPOST/api/moodLog a new mood entryGET/api/meditationGet meditation recommendationsPOST/api/alertSend emergency alert (Twilio)
 
 Deployment
 
